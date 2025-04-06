@@ -1,10 +1,13 @@
 import React from 'react'
 import { BrowserRouter,Routes, Route } from "react-router-dom";
+import LoginPage from './pages/LoginPage';
 
 
 function App() {
   return (
-    <div>App</div>
+    <div>
+      <LoginPage />
+    </div>
   )
 }
 
