@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { mockLogin } from "./auth/fakeAuthAPI";
+import { mockLogin } from "./auth/FakeAuthAPI";
 import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import AdminPage from "./pages/AdminPage";
 import UserPage from "./pages/UserPage";
-
 
 function App() {
   const [auth, setAuth] = useState({
@@ -21,13 +20,12 @@ function App() {
       setAuth({
         token: data.token,
         user: data.user,
-      }); 
-    }
-    catch (error) {
+      });
+    } catch (error) {
       alert("Login failed");
     }
-  }
-  // handle logout event 
+  };
+  // handle logout event
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -35,7 +33,7 @@ function App() {
       token: null,
       user: null,
     });
-  }
+  };
   // check if user is logged in using wrapper component instead to move the logic into every page component manually
   const RequireAuth = ({ children, role }) => {
     if (!auth.token) return <Navigate to="/login" />;
@@ -43,12 +41,30 @@ function App() {
     return children;
   };
 
-
-  
   return (
-    <div>
-      <LoginPage />
-    </div>
+    <BrowserRouter>
+      <Navbar user={auth.user} logout={logout} />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage login={login} />} />
+        <Route
+          path="/admin"
+          element={
+            <RequireAuth role="admin">
+              <AdminPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/user"
+          element={
+            <RequireAuth role="user">
+              <UserPage />
+            </RequireAuth>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
