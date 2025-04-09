@@ -8,15 +8,17 @@ function Navbar({ user, logout }) {
       {user ? (
         <>
           <span>
-            Hello {user.username} ({user.role}){" "}
+            Hello {user.username} ({user.role})
           </span>
           {user.role === "admin" && <Link to="/admin">Admin</Link>}
           {user.role === "user" && <Link to="/user">User</Link>}
-
           <button onClick={logout}>Logout</button>
         </>
       ) : (
-        <Link to="/login">Login</Link>
+        <>
+          <Link to="/login">Login</Link>
+          <Link to="/register">Register</Link>
+        </>
       )}
     </nav>
   );

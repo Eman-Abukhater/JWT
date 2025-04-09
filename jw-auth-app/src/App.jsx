@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { mockLogin } from "./auth/FakeAuthAPI";
 import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import AdminPage from "./pages/AdminPage";
 import UserPage from "./pages/UserPage";
@@ -12,6 +13,8 @@ function App() {
     token: localStorage.getItem("token") || null,
     user: JSON.parse(localStorage.getItem("user")) || null,
   });
+
+  // Handle login logic and redirect based on role
   const login = async (username, password) => {
     try {
       const data = await mockLogin(username, password);
@@ -21,11 +24,18 @@ function App() {
         token: data.token,
         user: data.user,
       });
+
+      // Redirect based on the user's role
+      if (data.user.role === "admin") {
+        window.location.href = "/admin"; // Redirect to AdminPage if admin
+      } else if (data.user.role === "user") {
+        window.location.href = "/user"; // Redirect to UserPage if user
+      }
     } catch (error) {
       alert("Login failed");
     }
   };
-  // handle logout event
+
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -34,7 +44,7 @@ function App() {
       user: null,
     });
   };
-  // check if user is logged in using wrapper component instead to move the logic into every page component manually
+
   const RequireAuth = ({ children, role }) => {
     if (!auth.token) return <Navigate to="/login" />;
     if (role && auth.user.role !== role) return <Navigate to="/" />;
@@ -47,6 +57,9 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage login={login} />} />
+        <Route path="/register" element={<RegisterPage />} />
+        
+        {/* Redirects based on role */}
         <Route
           path="/admin"
           element={

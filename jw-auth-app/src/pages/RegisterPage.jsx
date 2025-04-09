@@ -1,23 +1,29 @@
+// RegisterPage.jsx
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { mockRegister } from "../auth/FakeAuthAPI";
 
-function LoginPage({ login }) {
+function RegisterPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [role, setRole] = useState("user");
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(username, password);
-    
+      await mockRegister(username, password, role);
+      alert("Registration successful! Please log in.");
+      navigate("/login");
     } catch (err) {
-      setError("Invalid username or password. Please register first.");
+      setError(err.message); // Show error message if registration fails
     }
   };
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -33,7 +39,11 @@ function LoginPage({ login }) {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        <select value={role} onChange={(e) => setRole(e.target.value)}>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button type="submit">Register</button>
       </form>
 
       {error && <p style={{ color: "red" }}>{error}</p>} {/* Display error message */}
@@ -41,4 +51,4 @@ function LoginPage({ login }) {
   );
 }
 
-export default LoginPage;
+export default RegisterPage;
